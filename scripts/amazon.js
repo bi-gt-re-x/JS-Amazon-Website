@@ -1,8 +1,9 @@
-import {cart, addToCart} from '../data/cart.js';
-import {products} from '../data/products.js';
-import {formatCurrency} from './utils/money.js';
+import { cart, addToCart } from "../data/cart.js";
+import { products } from "../data/products.js";
+import { formatCurrency } from "./utils/money.js";
 
-let productsHTML = '';
+let productsHTML = "";
+updateCartQuantity();
 
 products.forEach((product) => {
   productsHTML += `
@@ -58,7 +59,7 @@ products.forEach((product) => {
   `;
 });
 
-document.querySelector('.js-products-grid').innerHTML = productsHTML;
+document.querySelector(".js-products-grid").innerHTML = productsHTML;
 
 function updateCartQuantity() {
   let cartQuantity = 0;
@@ -67,32 +68,30 @@ function updateCartQuantity() {
     cartQuantity += cartItem.quantity;
   });
 
-  document.querySelector('.js-cart-quantity')
-    .innerHTML = cartQuantity;
+  document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
 }
 
 const addedMessageTimeouts = {};
 
-document.querySelectorAll('.js-add-to-cart')
-  .forEach((button) => {
-    button.addEventListener('click', () => {
-      const productId = button.dataset.productId;
+document.querySelectorAll(".js-add-to-cart").forEach((button) => {
+  button.addEventListener("click", () => {
+    const productId = button.dataset.productId;
 
-      addToCart(productId);
-      updateCartQuantity();
+    addToCart(productId);
+    updateCartQuantity();
 
-      const addedMessage = document.querySelector(
-        `.js-added-to-cart-${productId}`
-      );
+    const addedMessage = document.querySelector(
+      `.js-added-to-cart-${productId}`,
+    );
 
-      addedMessage.style.opacity = 1;
+    addedMessage.style.opacity = 1;
 
-      if (addedMessageTimeouts[productId]) {
-        clearTimeout(addedMessageTimeouts[productId]);
-      }
+    if (addedMessageTimeouts[productId]) {
+      clearTimeout(addedMessageTimeouts[productId]);
+    }
 
-      addedMessageTimeouts[productId] = setTimeout(() => {
-        addedMessage.style.opacity = 0;
-      }, 2000);
-    });
+    addedMessageTimeouts[productId] = setTimeout(() => {
+      addedMessage.style.opacity = 0;
+    }, 2000);
   });
+});
