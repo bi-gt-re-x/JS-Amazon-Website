@@ -1,16 +1,79 @@
-export function getProduct(productId) {
-  let matchingProduct;
+import {formatCurrency} from '../scripts/utils/money.js';
 
-  products.forEach((product) => {
-    if (product.id === productId) {
-      matchingProduct = product;
+export class Product {
+    id;
+    image;
+    name;
+    rating;
+    priceCents;
+
+    constructor(productDetails) {
+        this.id = productDetails.id;
+        this.image = productDetails.image;
+        this.name = productDetails.name;
+        this.rating = productDetails.rating;
+        this.priceCents = productDetails.priceCents;
     }
-  });
 
-  return matchingProduct;
+    getStarsUrl() {
+        return `images/ratings/rating-${this.rating.stars * 10}.png`;
+    }
+
+    getPrice() {
+        return `$${formatCurrency(this.priceCents)}`;
+    }
+
+    extraInfoHTML() {
+        return '';
+    }
 }
 
-export const products = [
+export class Clothing extends Product {
+    sizeChartUrl;
+
+    constructor(productDetails) {
+        super(productDetails);
+        this.sizeChartUrl = productDetails.sizeChartLink;
+    }
+
+    extraInfoHTML() {
+        return `<a href="${this.sizeChartUrl}" target="_blank">Size chart</a>`;
+    }
+}
+
+export class Appliance extends Product {
+    instructionsUrl;
+    warrantyUrl;
+
+    constructor(productDetails) {
+        super(productDetails);
+        this.instructionsUrl = productDetails.instructionsUrl;
+        this.warrantyUrl = productDetails.warrantyUrl;
+    }
+
+    extraInfoHTML() {
+        return `
+      <a href="${this.instructionsUrl}" target="_blank">Instructions</a>
+      <a href="${this.warrantyUrl}" target="_blank">Warranty</a>
+    `;
+    }
+}
+
+export function getProduct(productId) {
+    let matchingProduct;
+
+    products.forEach((product) => {
+        if (product.id === productId) {
+            matchingProduct = product;
+        }
+    });
+
+    return matchingProduct;
+}
+
+export let products = [];
+
+const productData = [
   {
     id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
     image: "images/products/athletic-cotton-socks-6-pairs.jpg",
@@ -670,3 +733,17 @@ export const products = [
     ]
   }
 ];
+
+productData.forEach((productDetails) => {
+    let product;
+
+    if (productDetails.type === 'clothing') {
+        product = new Clothing(productDetails);
+    } else if (productDetails.type === 'appliance') {
+        product = new Appliance(productDetails);
+    } else {
+        product = new Product(productDetails);
+    }
+
+    products.push(product);
+});
