@@ -28,10 +28,6 @@ products.forEach((product) => {
         ${product.getPrice()}
       </div>
 
-      <div class="product-extra-info">
-        ${product.extraInfoHTML()}
-      </div>
-
       <div class="product-quantity-container">
         <select>
           <option selected value="1">1</option>
@@ -48,6 +44,10 @@ products.forEach((product) => {
       </div>
 
       <div class="product-spacer"></div>
+
+      <div class="product-extra-info">
+        ${product.extraInfoHTML()}
+      </div>
 
       <div class="added-to-cart">
         <img src="images/icons/checkmark.png">
