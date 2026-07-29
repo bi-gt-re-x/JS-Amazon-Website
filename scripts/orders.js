@@ -5,6 +5,7 @@ import {cart, addToCart} from '../data/cart.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 
 let ordersHTML = '';
+console.log(orders);
 
 export class Order {
   id;
