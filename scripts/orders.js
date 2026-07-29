@@ -1,6 +1,10 @@
-import { orders } from "../data/orders.js";
-import { formatCurrency } from "./utils/money.js";
+import { orders } from '../data/orders.js';
+import { formatCurrency } from './utils/money.js';
+import { productData } from '../data/products.js';
+import {cart, addToCart} from '../data/cart.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
+
+let ordersHTML = '';
 
 export class Order {
   id;
@@ -14,11 +18,10 @@ export class Order {
   }
 }
 
-let ordersHTML = "";
-
 orders.forEach((orderData) => {
   const orderInstance = new Order(orderData);
   const time = dayjs(orderInstance.placingTime);
+  const productLoop = orderData.products;
 
   ordersHTML += `
     <div class="order-container">
@@ -33,26 +36,37 @@ orders.forEach((orderData) => {
             <div>$${orderInstance.total}</div>
           </div>
         </div>
-        <div class="order-header-right-section">
+        <div class="order-header-right-section">  
           <div class="order-header-label">Order ID:</div>
           <div>${orderInstance.id}</div>
         </div>
       </div>
+  `;
+
+  if (!productLoop) {
+    return;
+  }
+
+  productLoop.forEach((product) => {
+    const matchingProduct = productData.find((pro) => pro.id === product.productId);
+    const estimatedDeliveryTime = dayjs(product.estimatedDeliveryTime);
+
+    ordersHTML += `
       <div class="order-details-grid">
         <div class="product-image-container">
-          <img src="$images/products/athletic-cotton-socks-6-pairs.jpg">
+          <img src="${matchingProduct.image}">
         </div>
         <div class="product-details">
           <div class="product-name">
-            Black and Gray Athletic Cotton Socks - 6 Pairs
+            ${matchingProduct.name}
           </div>
           <div class="product-delivery-date">
-            Arriving on: August 15
+            Arriving on: ${estimatedDeliveryTime.format('dddd, MMMM D')}
           </div>
           <div class="product-quantity">
-            Quantity: 1
+            Quantity: ${product.quantity}
           </div>
-          <button class="buy-again-button button-primary">
+          <button class="buy-again-button button-primary" data-product-id="${product.productId}">
             <img class="buy-again-icon" src="images/icons/buy-again.png">
             <span class="buy-again-message">Buy it again</span>
           </button>
@@ -65,8 +79,29 @@ orders.forEach((orderData) => {
           </a>
         </div>
       </div>
-    </div>
-  `;
+    `;
+  });
+
+  ordersHTML += `</div>`;
 });
 
-document.querySelector(".orders-grid").innerHTML = ordersHTML;
+document.querySelector('.orders-grid').innerHTML = ordersHTML;
+
+function getCartQuantity() {
+  let cartQuantity = 0;
+
+  cart.forEach((cartItem) => {
+      cartQuantity += cartItem.quantity;
+  });
+
+  document.querySelector('.cart-quantity').innerHTML = cartQuantity;
+}
+
+getCartQuantity();
+
+document.querySelectorAll('.buy-again-button').forEach((button) => {
+  button.addEventListener('click', () => {
+    addToCart(button.dataset.productId);
+    getCartQuantity();
+  });
+});
