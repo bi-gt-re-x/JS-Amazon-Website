@@ -70,6 +70,8 @@ export function renderPaymentSummary() {
 
     document.querySelector('.js-payment-summary')
         .innerHTML = paymentSummaryHTML;
+
+    console.log(cart);
     
     document.querySelector('.js-place-order').addEventListener('click', async () => {
         try {

@@ -3,6 +3,7 @@ import { formatCurrency } from './utils/money.js';
 import { productData } from '../data/products.js';
 import {cart, addToCart} from '../data/cart.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
+import { deliveryOptions, calculateDeliveryDate} from '../data/deliveryOptions.js';
 
 let ordersHTML = '';
 console.log(orders);
@@ -61,7 +62,7 @@ orders.forEach((orderData) => {
           <div class="product-name">
             ${matchingProduct.name}
           </div>
-          <div class="product-delivery-date">
+          <div class="product-delivery-date js-delivery-date">
             Arriving on: ${estimatedDeliveryTime.format('dddd, MMMM D')}
           </div>
           <div class="product-quantity">
@@ -106,3 +107,4 @@ document.querySelectorAll('.buy-again-button').forEach((button) => {
     getCartQuantity();
   });
 });
+
