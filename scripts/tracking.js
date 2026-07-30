@@ -1,10 +1,23 @@
+import { productData } from "../data/products.js";
+import { orders } from '../data/orders.js';
+import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get('productId');
   const orderId = urlParams.get('orderId');
+  const matchingProduct = productData.find((pro) => pro.id === productId);
+  const order = orders.find((ord) => ord.id === orderId);
+  const orderMiddle = order.products;
+  let orderItemDetails = '';
+  
+  orderMiddle.forEach((product) => {
+    if (product.productId === productId) {
+        orderItemDetails = product;
+    }
+  });
 
-  console.log("Product ID:", productId);
-  console.log("Order ID:", orderId);
+  const time = dayjs(orderItemDetails.estimatedDeliveryTime);
 
   let trackingHTML = "";
 
@@ -14,18 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
         </a>
 
         <div class="delivery-date">
-            Arriving on Monday, June 13
+            Arriving on ${time.format('dddd, MMMM D')}
         </div>
 
         <div class="product-info">
-            Black and Gray Athletic Cotton Socks - 6 Pairs
+            ${matchingProduct.name}
         </div>
 
         <div class="product-info">
-            Quantity: 1
+            Quantity: ${orderItemDetails.quantity}
         </div>
 
-        <img class="product-image" src="images/products/athletic-cotton-socks-6-pairs.jpg">
+        <img class="product-image" src="${matchingProduct.image}">
 
         <div class="progress-labels-container">
             <div class="progress-label">
