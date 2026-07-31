@@ -2,12 +2,51 @@ import {cart, addToCart} from '../data/cart.js';
 import {products, loadProducts} from '../data/products.js';
 import {formatCurrency} from './utils/money.js';
 
+const search = new URLSearchParams(window.location.search).get('search');
+const searchBar = document.querySelector('.search-bar');
+
+if (search) {
+  searchBar.value = search;
+}
+
+document.querySelector('.search-button').addEventListener('click', () => {
+  goToSearch();
+});
+
+searchBar.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    goToSearch();
+  }
+});
+
+function goToSearch() {
+  window.location.href = `amazon.html?search=${encodeURIComponent(searchBar.value)}`;
+}
+
+function getMatchingProducts() {
+  if (!search) {
+    return products;
+  }
+
+  const searchTerm = search.toLowerCase();
+
+  return products.filter((product) => {
+    const nameMatches = product.name.toLowerCase().includes(searchTerm);
+
+    const keywordMatches = product.keywords.some((keyword) => {
+      return keyword.toLowerCase().includes(searchTerm);
+    });
+
+    return nameMatches || keywordMatches;
+  });
+}
+
 loadProducts(renderProductsGrid);
 
 function renderProductsGrid() {
   let productsHTML = '';
 
-  products.forEach((product) => {
+  getMatchingProducts().forEach((product) => {
     productsHTML += `
       <div class="product-container">
         <div class="product-image-container">
