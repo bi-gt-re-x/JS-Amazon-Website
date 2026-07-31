@@ -1,6 +1,6 @@
 import {cart} from '../../data/cart.js';
 import {getProduct} from '../../data/products.js';
-import {getDeliveryOption} from '../../data/deliveryOptions.js';
+import {getDeliveryOption, calculateDeliveryDay} from '../../data/deliveryOptions.js';
 import {formatCurrency} from '../utils/money.js';
 import {addOrder} from '../../data/orders.js';
 
@@ -88,6 +88,20 @@ export function renderPaymentSummary() {
         });
 
         const order = await response.json();
+
+        if (order.products) {
+          order.products.forEach((orderProduct) => {
+            const cartItem = cart.find((item) => item.productId === orderProduct.productId);
+
+            if (!cartItem) {
+              return;
+            }
+
+            const deliveryOption = getDeliveryOption(cartItem.deliveryOptionId);
+            orderProduct.estimatedDeliveryTime = calculateDeliveryDay(deliveryOption).toISOString();
+          });
+        }
+
         addOrder(order);
 
         } catch (error) {

@@ -36,7 +36,7 @@ export function validDeliveryOption(deliveryOptionId) {
     return isValid;
 }
 
-export function calculateDeliveryDate(deliveryOption) {
+export function calculateDeliveryDay(deliveryOption) {
     let remainingDays = deliveryOption.deliveryDays;
     let deliveryDate = dayjs();
 
@@ -47,5 +47,9 @@ export function calculateDeliveryDate(deliveryOption) {
             remainingDays--;
         }
     }
-    return deliveryDate.format('dddd, MMMM D');
+    return deliveryDate;
+}
+
+export function calculateDeliveryDate(deliveryOption) {
+    return calculateDeliveryDay(deliveryOption).format('dddd, MMMM D');
 }
